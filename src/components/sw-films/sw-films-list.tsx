@@ -1,5 +1,4 @@
 import React from 'react';
-import { IReactComponent } from 'mobx-react/dist/types/IReactComponent';
 import {
   Resource,
   TLoadResourceAction,
@@ -32,9 +31,9 @@ export const loadSWFilmsListResource = () => {
         <h1>films count: {resource.data?.count}</h1>
         {resource
           .getChildComponents('films')
-          .map((Film: IReactComponent<any>) => {
+          .map(({ Component: Film, resourceId }) => {
             return (
-              <div>
+              <div key={resourceId}>
                 <Film />
                 <hr />
               </div>

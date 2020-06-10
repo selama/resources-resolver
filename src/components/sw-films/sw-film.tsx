@@ -4,24 +4,37 @@ import {
   TLoadResourceAction,
   TResourceComponentProps,
 } from '../../resource-utils/resource';
+import { loadSWCharactherResource } from './sw-charachter';
 
 export const loadSWFilmResource = (film: any) => {
-  const loadAction: TLoadResourceAction = async (
+  const loadAction: TLoadResourceAction = (
     setData,
     setChildren,
     setResourceReady,
   ) => {
     setData(film);
     setResourceReady();
+    const childResources = film.characters.map(loadSWCharactherResource);
+    setChildren('characters', childResources);
   };
 
   interface SWFilmProps extends TResourceComponentProps {}
 
   const SWFilm = ({ resource }: SWFilmProps) => {
-    if (!resource.data) {
-      return null;
-    }
-    return <div>{resource.data.title}</div>;
+    return (
+      <div>
+        <h2>{resource.data.title}</h2>
+        <div>
+          {resource
+            .getChildComponents('characters')
+            .map(({ Component: Charachter, resourceId, isReady }) => (
+              <div key={resourceId}>
+                {isReady ? <Charachter /> : <div>loading charecther</div>}
+              </div>
+            ))}
+        </div>
+      </div>
+    );
   };
 
   return new Resource(loadAction, SWFilm);
