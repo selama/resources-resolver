@@ -12,14 +12,9 @@ const getCharacther = (charactherUrl: string) =>
   });
 
 export const loadSWCharactherResource = (charactherUrl: string) => {
-  const loadAction: TLoadResourceAction = async (
-    setData,
-    setChildren,
-    setResourceReady,
-  ) => {
+  const loadAction: TLoadResourceAction = async setData => {
     const characther = await getCharacther(charactherUrl);
     setData(characther);
-    setResourceReady();
   };
 
   interface SWCharactherProps extends TResourceComponentProps {}

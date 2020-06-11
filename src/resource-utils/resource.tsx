@@ -6,11 +6,11 @@ import { computedFn } from 'mobx-utils';
 import Chance from 'chance';
 import 'mobx-react-lite/batchingForReactDom';
 
+type TResourceChildren = Map<string, Resource | Resource[]>;
+
 export type TLoadResourceAction = (
   setData: (data: any) => void,
-  setChildren: (childName: string, children: Resource | Resource[]) => void,
-  setResourceReady: () => void,
-) => void;
+) => Promise<TResourceChildren | void>;
 
 export type TResourceComponentProps = {
   resource: {
@@ -48,7 +48,7 @@ export class Resource {
   resourceReady: boolean = false;
 
   @observable
-  children: Map<string, Resource | Resource[]> = new Map();
+  children: TResourceChildren = new Map();
 
   @observable
   data: any;
@@ -59,8 +59,8 @@ export class Resource {
   }
 
   @action
-  setChildren(childName: string, children: Resource | Resource[]) {
-    this.children.set(childName, children);
+  setChildren(children: TResourceChildren) {
+    this.children = children;
   }
 
   @action
@@ -73,11 +73,10 @@ export class Resource {
     component: IReactComponent<any>,
   ) {
     this.resourceId = new Chance().hash({ length: 5 });
-    loadAction(
-      this.setData.bind(this),
-      this.setChildren.bind(this),
-      this.setResourceReady.bind(this),
-    );
+    loadAction(this.setData.bind(this)).then(children => {
+      this.setChildren(children || new Map());
+      this.setResourceReady();
+    });
     this.component = component;
   }
 
@@ -85,11 +84,10 @@ export class Resource {
   get isReady(): boolean {
     let flat: Resource[] = [];
     this.children.forEach((resources: Resource | Resource[]) => {
-      if (Array.isArray(resources)) {
-        flat = [...flat, ...resources.slice()];
-      } else {
-        flat = [...flat, resources];
-      }
+      flat = [
+        ...flat,
+        ...(Array.isArray(resources) ? resources.slice() : [resources]),
+      ];
     });
     const isReady =
       this.resourceReady &&
@@ -101,8 +99,8 @@ export class Resource {
     const resource = this.children.get(childName) as Resource;
     return {
       Component: resource?.getComponent(),
-      resourceId: resource.resourceId,
-      isReady: resource.isReady,
+      resourceId: resource?.resourceId,
+      isReady: resource?.isReady,
     };
   });
 

@@ -7,15 +7,10 @@ import {
 import { loadSWCharactherResource } from './sw-charachter';
 
 export const loadSWFilmResource = (film: any) => {
-  const loadAction: TLoadResourceAction = (
-    setData,
-    setChildren,
-    setResourceReady,
-  ) => {
+  const loadAction: TLoadResourceAction = async setData => {
     setData(film);
-    setResourceReady();
     const childResources = film.characters.map(loadSWCharactherResource);
-    setChildren('characters', childResources);
+    return new Map().set('characters', childResources);
   };
 
   interface SWFilmProps extends TResourceComponentProps {}

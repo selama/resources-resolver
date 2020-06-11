@@ -11,16 +11,11 @@ const getFilms = () =>
   api.get(`https://swapi.dev/api/films/`).then(({ data }) => data);
 
 export const loadSWFilmsListResource = () => {
-  const loadAction: TLoadResourceAction = async (
-    setData,
-    setChildren,
-    setResourceReady,
-  ) => {
+  const loadAction: TLoadResourceAction = async setData => {
     const films = await getFilms();
     const childResources = films.results.map(loadSWFilmResource);
-    setChildren('films', childResources);
     setData(films);
-    setResourceReady();
+    return new Map().set('films', childResources);
   };
 
   interface SWFilmsListProps extends TResourceComponentProps {}
