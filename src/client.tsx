@@ -1,14 +1,8 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
 import { I18nextProvider, initI18n } from '@wix/wix-i18n-config';
-import { wixAxiosConfig } from '@wix/wix-axios-config';
 import { create as createFedopsLogger } from '@wix/fedops-logger';
 import App from './components/App';
-
-const baseURL = window.__BASEURL__;
-
-wixAxiosConfig(axios, { baseURL });
 
 const fedopsLogger = createFedopsLogger('resources-resolver');
 

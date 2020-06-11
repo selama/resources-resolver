@@ -4,11 +4,11 @@ import {
   TLoadResourceAction,
   TResourceComponentProps,
 } from '../../resource-utils/resource';
-import axios from 'axios';
+import { api } from '../../api';
 import { loadSWFilmResource } from './sw-film';
 
 const getFilms = () =>
-  axios.get(`https://swapi.dev/api/films/`).then(({ data }) => data);
+  api.get(`https://swapi.dev/api/films/`).then(({ data }) => data);
 
 export const loadSWFilmsListResource = () => {
   const loadAction: TLoadResourceAction = async (

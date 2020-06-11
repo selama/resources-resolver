@@ -4,10 +4,12 @@ import {
   TLoadResourceAction,
   TResourceComponentProps,
 } from '../../resource-utils/resource';
-import axios from 'axios';
+import { api } from '../../api';
 
 const getCharacther = (charactherUrl: string) =>
-  axios.get(charactherUrl).then(({ data }) => data);
+  api.get(charactherUrl).then(({ data }) => {
+    return data;
+  });
 
 export const loadSWCharactherResource = (charactherUrl: string) => {
   const loadAction: TLoadResourceAction = async (
